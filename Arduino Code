@@ -1,0 +1,62 @@
+#include <Keypad.h>
+
+
+const byte ROWS = 4;
+const byte COLS = 3;
+char keys[ROWS][COLS] = {
+  {'1', '2', '3'},
+  {'4', '5', '6'},
+  {'7', '8', '9'},
+  {'*', '0', '#'}
+};
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+
+const int reedPin = 2; 
+const int buzzerPin = 10;
+const int ledPin = 11; 
+
+
+bool alarmActive = false; 
+String inputCode = "";
+const String correctCode = "1234"; 
+
+void setup() {
+  pinMode(reedPin, INPUT_PULLUP);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  char key = keypad.getKey();
+  if (key) {
+    if (key == '#') { // Confirm code
+      if (inputCode == correctCode) {
+        alarmActive = !alarmActive; 
+        inputCode = "";
+        digitalWrite(ledPin, alarmActive ? HIGH : LOW);
+        Serial.println(alarmActive ? "Alarm activated" : "Alarm deactivated");
+      } else {
+        Serial.println("Wrong code!");
+        inputCode = "";
+      }
+    } else if (key == '*') {
+      inputCode = "";
+      Serial.println("Code cleared");
+    } else { 
+      inputCode += key;
+      Serial.println("Key pressed: " + String(key));
+    }
+  }
+
+ 
+  if (digitalRead(reedPin) == LOW && alarmActive) { 
+    digitalWrite(buzzerPin, HIGH);
+  } else {
+    digitalWrite(buzzerPin, LOW);
+  }
+}
