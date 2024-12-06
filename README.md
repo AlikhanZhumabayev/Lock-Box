@@ -14,3 +14,5 @@ When the safe is opened and the alarm system is active, a buzzer goes off.
 The PIN
 The alarm buzzer can be toggled on and off with a
 The system confirms activation or deactivation with an LED indicator.
+
+View it on Youtube
